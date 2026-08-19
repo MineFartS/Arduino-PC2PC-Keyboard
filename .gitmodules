@@ -1,0 +1,6 @@
+
+[submodule "msys2"]
+	path = msys2
+	url = https://github.com/MineFartS/MSYS2/
+    ignore = all
+
