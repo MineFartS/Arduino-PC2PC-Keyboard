@@ -1,18 +1,34 @@
 #include <Arduino.h>
+#include <Keyboard.h>
 
-// put function declarations here:
-int myFunction(int, int);
+// Using Port 9 for the touch sensor
+const int touchPin = 9;
 
 void setup() {
-  // put your setup code here, to run once:
-  int result = myFunction(2, 3);
+    
+    // INPUT_PULLUP keeps the pin HIGH until ground forces it LOW
+    pinMode(touchPin, INPUT_PULLUP);
+    
+    Keyboard.begin();
+
+}
+
+bool is_touched() {
+    return digitalRead(touchPin) == LOW;
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
-}
 
-// put function definitions here:
-int myFunction(int x, int y) {
-  return x + y;
+    if (is_touched()) {
+
+        // Press the Enter key
+        Keyboard.write(KEY_RETURN);
+
+        // Block execution until the port is released from ground
+        while (is_touched()) {
+            delay(10);
+        }
+
+    }
+
 }
