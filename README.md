@@ -3,7 +3,7 @@
 
 #### UNFINISHED
 
-![](.github/diagram1.svg)
+[![](.github/diagram1.svg)](.github/Diagram.md)
 
 ---
 ### Hardware
