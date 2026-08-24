@@ -4,3 +4,9 @@
 	url = https://github.com/MineFartS/MSYS2/
     ignore = all
 
+[submodule ".python"]
+	path = .python
+	url = https://github.com/MineFartS/Python-Embed
+	branch = 3.12.10
+    ignore = all
+
