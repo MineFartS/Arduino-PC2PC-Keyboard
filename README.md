@@ -24,4 +24,11 @@
     *Receives keystrokes from the Slave Node*
 
 ---
+### Flashing
+
+1. Connect Arduino Leonardo Node to the Windows Computer
+2. Go to the node directory *(master, slave)*
+2. Run `flash.bat`
+
+---
 
