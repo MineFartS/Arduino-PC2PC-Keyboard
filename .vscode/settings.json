@@ -1,5 +1,9 @@
 {
   "terminal.integrated.env.windows": {
     "PATH": "${workspaceFolder}/.msys2/ucrt64/bin;${workspaceFolder}/.msys2/usr/bin;${env:PATH}"
-  }
+},
+"files.exclude": {
+    ".msys2": true,
+    ".python": true
+}
 }
