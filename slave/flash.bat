@@ -12,5 +12,5 @@ echo ----- Installing Libraries -----
 
 ::===========================================
 
-"%~dp0../_compile.bat" slave
+"%~dp0../_flash.bat" slave
 
