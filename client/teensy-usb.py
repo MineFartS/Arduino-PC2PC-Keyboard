@@ -1,99 +1,40 @@
 #!/usr/bin/python
-# SPDX-License-Identifier: MIT
-#
-# Copyright (c) 2018 Sony Corporation
-#
-# Author: Tim Bird <tim.bird@sony.com>
-#
-# This assumes that the teensy has the etherkey sketch loaded,
-# and that the serial port (pins gnd,0,1) are connected to the
-# local machine via some device (e.g. USB serial, in the examples
-# below)
-#
 
-import serial
-import sys
-import time
+import argparse
+import subprocess
+from subprocess import Popen
 
-def usage(rcode):
-    print """Usage: teensy-usb.py [options] <device> <commands>
+# serial_cmd string
+serial_cmd = 'cu -l /dev/ttyAMA0 -s 57600'
 
-Sends the keystrokes indicated by <commands> to the
-machine connected via USB to the teensy board.
+##########
 
--h         = show this usage help
--c         = show a command string cheatsheet
-<device>   = e.g. /dev/ttyUSB1
-<commands> = words or letters use to produce keystrokes for the "Command Mode"
-             of teensy running the etherkey sketch.
-             (see  https://github.com/Flowm/etherkey)
+def parseArguments():
+    parser = argparse.ArgumentParser(description='USB-Net-Keyboard Client 0.01')
+    parser.add_argument("-l", "--live", action='store_true', help="Live-Mode interaction with Net-Keyboard")
+    parser.add_argument("-f", "--file", help="File-Mode send a command file")
+    parser.add_argument("-s", "--server", help="login@server")
+    args = parser.parse_args()
 
-The <commands> are same as etherkey command mode strings, with
-one addition.  You can also specify sleep=x, where x is a floating
-point number (e.g. 0.2)
+    if args.live and args.server:
+        print("\nConnecting via Live-Mode:\n")
+        ret = subprocess.call(["ssh", "-t", args.server, serial_cmd])
 
-Example:
-Here is a sequence that will send 2 down arrows, separated by a half second:
- $ teensy-usb.py /dev/ttyUSB0 {down} sleep=0.5 {down}
+    elif args.file and args.server:
+        print("\nConnecting via File-Mode:\n")
 
-By default, teensy-usb.py will put a .1 second delay between each command
-transmitted.
-"""
-    exit(rcode)
+        copy = subprocess.Popen( ["cat - " + args.file + "| ssh " + args.server + " " + serial_cmd ], stdin=subprocess.PIPE, shell=True)
+        copy.communicate("$'\cc'")
 
-def cheatsheet():
-    print """        Keystroke cheat sheet
-        -------------------------
-Regular characters: send those character as keystrokes
-ex: "Now is the time for all good men..."
+    else:
+        print("Please use the following combinations\n")
+        print("LIVE-Mode: ./EtherkeyClient -l -s login@server")
+        print("FILE-Mode: ./EtherkeyClient -f FILE -s login@server\n")
+        return
 
-Modifiers: ! = send next char with ALT key pressed
-+ = SHIFT, ^ = CTRL, # = WIN
-ex: ab^c  - sends 'a' and 'b', and CTRL-C
+def main():
+    parseArguments()
 
-Named keys: {enter}, {escape}, {space}, {tab}, {backspace}/{BS},
-{delete}/{del}, {insert}/{ins}, {up}, {down}, {left}, {right},
-{home}, {end}, {pgup}, {pgdn}
+if __name__=='__main__':
+        main()
 
-Escaped characters:  To send a single character literally, use braces:
-{x}, {!}, {+}, {^} {#}, {{} {}}
-
-Repeats: put number of iterations inside the brace, after the item:
-ex: {x 10} - sends 'x' 10 times, and {Enter 5} sends 5 Enters
-"""
-    exit(0)
-
-
-if "-h" in sys.argv or "--help" in sys.argv:
-    usage(0)
-
-if "-c" in sys.argv or "--cheatsheet" in sys.argv:
-    cheatsheet()
-
-if len(sys.argv)<3:
-    print("Not enough command line arguments")
-    usage(1)
-
-
-device = sys.argv[1]
-commands = sys.argv[2:]
-ser = serial.Serial(device, 57600)
-
-# make sure we're in Command mode
-# send ctrl-Q, then 1
-ser.write("\x11")
-time.sleep(0.1)
-ser.write("1")
-time.sleep(0.1)
-
-# now send commands
-for cmd in commands:
-    if cmd.startswith("sleep="):
-        amount=float(cmd[6:])
-        time.sleep(amount)
-        continue
-
-    ser.write("Send %s\n" % cmd)
-    time.sleep(0.1)
-
-ser.close()

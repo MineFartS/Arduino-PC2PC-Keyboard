@@ -24,12 +24,12 @@ def parseArguments():
         print("\nConnecting via File-Mode:\n")
 
         copy = subprocess.Popen( ["cat - " + args.file + "| ssh " + args.server + " " + serial_cmd ], stdin=subprocess.PIPE, shell=True)
-        copy.communicate("$'\cc'")
+        copy.communicate(r"$'\cc'")
 
     else:
-        print "Please use the following combinations\n"
-        print "LIVE-Mode: ./EtherkeyClient -l -s login@server"
-        print "FILE-Mode: ./EtherkeyClient -f FILE -s login@server\n"
+        print("Please use the following combinations\n")
+        print("LIVE-Mode: ./EtherkeyClient -l -s login@server")
+        print("FILE-Mode: ./EtherkeyClient -f FILE -s login@server\n")
         return
 
 def main():
@@ -37,3 +37,4 @@ def main():
 
 if __name__=='__main__':
         main()
+
