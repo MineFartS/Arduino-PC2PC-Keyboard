@@ -1,12 +1,12 @@
 
 [submodule "msys2"]
 	path = .msys2
-	url = https://github.com/MineFartS/MSYS2/
+	url = https://github.com/MineFartsEmbed/MSYS2
     ignore = all
 
 [submodule ".python"]
 	path = .python
-	url = https://github.com/MineFartS/Python-Embed
+	url = https://github.com/MineFartsEmbed/Python
 	branch = 3.12.10
     ignore = all
 
