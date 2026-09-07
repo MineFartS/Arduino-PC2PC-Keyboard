@@ -1,32 +1,29 @@
-
-// USB Virtual COM Port connected to your Client PC
-#define CLIENT_PORT Serial
-
-// Hardware UART Tx/Rx Pins wired to the Slave Node
-#define SLAVE_PORT  Serial1
-
-const uint32_t ETHERKEY_BAUD = 57600;
+#define MASTER_PC Serial
+#define INJECTOR_NODE Serial1
 
 void setup() {
 
-  // Initialize the native USB subsystem 
-  CLIENT_PORT.begin(ETHERKEY_BAUD);
-  
-  // Initialize physical TX (Pin 1) and RX (Pin 0) 
-  SLAVE_PORT.begin(ETHERKEY_BAUD);
-
+    // 1. Listen to the Master PC over the USB cable (Must match Python's 57600)
+    MASTER_PC.begin(57600); 
+    
+    // 2. Talk to the Etherkey Arduino via hardware TX/RX pins (Must match Etherkey's 57600)
+    INJECTOR_NODE.begin(57600);
+    
+    // Wait for the USB serial connection to stabilize
+    while (!MASTER_PC) { ; } 
 }
 
 void loop() {
 
-    // Pipe: Client PC -> Slave Node
-    while (CLIENT_PORT.available() > 0) {
-        SLAVE_PORT.write(CLIENT_PORT.read());
-    }
+    // Check if Python sent a keystroke over USB
+    if (MASTER_PC.available() > 0) {
+        
+        // Read the character from USB
+        char key = Serial.read();
+        
+        // Forward it out of the physical TX pin to Etherkey's RX pin
+        INJECTOR_NODE.print(key);
 
-    // Pipe: Slave Node -> Client PC
-    while (SLAVE_PORT.available() > 0) {
-        CLIENT_PORT.write(SLAVE_PORT.read());
     }
 
 }
