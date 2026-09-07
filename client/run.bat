@@ -17,7 +17,7 @@ echo ----- Installing Dependencies -----
 echo:
 echo ----- Client Session -----
 
-"%python%" EtherkeyClient.py -l
+"%python%" "%~dp0\EtherkeyClient.py"
 
 ::===========================================
 
