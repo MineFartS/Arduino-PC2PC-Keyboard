@@ -1,27 +1,27 @@
 ![](diagram1.svg)
 
                 +---------------------------------------+
-                |            CLIENT COMPUTER            |
+                |            MASTER COMPUTER            |
                 +---------------------------------------+
                                     |
                                     | USB Cable
                                     v
             +-----------------------------------------------+
-            |                  MASTER NODE                  |
+            |                  RELAY NODE                   |
             |              (Arduino Leonardo)               |
             +-----------------------------------------------+
                |                 |                |
-               |   Pin 1 (TX)    |   Pin 0 (RX)   |      GND
+               | Pin 1 (TX)      | Pin 0 (RX)     | GND
                |                 |                |
-               |   Pin 0 (RX)    |   Pin 1 (TX)   |      GND
+               | Pin 0 (RX)      | Pin 1 (TX)     | GND
                v                 v                v
             +-----------------------------------------------+
-            |                  SLAVE NODE                   |
+            |                INJECTOR NODE                  |
             |              (Arduino Leonardo)               |
             +-----------------------------------------------+
                                     |
                                     | USB Cable
                                     v
                 +---------------------------------------+
-                |            TARGET COMPUTER            |
+                |            SLAVE COMPUTER             |
                 +---------------------------------------+

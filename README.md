@@ -8,26 +8,26 @@
 ---
 ### Hardware
 
-- **[Client Computer](client/README.md)** \
-    *Sends serialized keystrokes to the Master Node*
+- **[Master Computer](client)** \
+    *Sends serialized keystrokes to the Relay Node*
 <br>
 
-- **[Master Node](master/README.md)** *(Arduino Leonardo)* \
-    *Forwards serial input from the Client Computer to the Slave Node*
+- **[Relay Node](firmware/relay)** *(Arduino Leonardo)* \
+    *Forwards serial input from the Master Computer to the Injector Node*
 <br>
 
-- **[Slave Node](slave/README.md)** *(Arduino Leonardo)* \
-    *Parses the serial input from the Master Node and emulates a physical keyboard for the Target Computer*
+- **[Injector Node](firmware/injector)** *(Arduino Leonardo)* \
+    *Parses the serial input from the Relay Node and emulates a physical keyboard for the Slave Computer*
 <br>
 
-- **Target Computer** \
+- **Slave Computer** \
     *Receives keystrokes from the Slave Node*
 
 ---
 ### Flashing
 
 1. Connect Arduino Leonardo Node to the Windows Computer
-2. Go to the node directory *(master, slave)*
+2. Go to the firmware directory *(relay, injector)*
 2. Run `flash.bat`
 
 ---

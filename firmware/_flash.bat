@@ -2,7 +2,7 @@
 
 ::===========================================
 
-set "arduino-cli=%~dp0.msys2\usr\bin\arduino-cli.exe"
+set "arduino-cli=%~dp0..\.msys2\usr\bin\arduino-cli.exe"
 
 set "inofile=%~dp0%1\%1.ino"
 

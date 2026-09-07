@@ -1,7 +1,7 @@
 @echo off
 cls
 
-set "arduino-cli=%~dp0..\.msys2\usr\bin\arduino-cli.exe"
+set "arduino-cli=%~dp0..\..\.msys2\usr\bin\arduino-cli.exe"
 
 ::===========================================
 
@@ -12,5 +12,5 @@ echo ----- Installing Libraries -----
 
 ::===========================================
 
-"%~dp0../_flash.bat" slave
+"%~dp0../_flash.bat" injector
 
