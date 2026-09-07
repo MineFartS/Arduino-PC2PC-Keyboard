@@ -29,12 +29,24 @@ echo %inofile%
 ::===========================================
 
 echo:
+echo ----- Discovering Board -----
+
+:: Scan connected devices, find the one matching your Leonardo FQBN, and parse its COM port
+set "TARGET_PORT="
+for /f "tokens=1,2" %%A in ('""%arduino-cli%" board list | findstr "leonardo""') do (
+    set "TARGET_PORT=%%A"
+    echo Found Leonardo board on port: %%A
+)
+
+::===========================================
+
+echo:
 echo ----- Flashing -----
 
+:: Send the compiled binary straight to the dynamically discovered port
 "%arduino-cli%" upload ^
-    --port COM3 ^
+    --port %TARGET_PORT% ^
     --fqbn %fqbn% ^
     "%inofile%"
 
 ::===========================================
-
