@@ -1,41 +1,5 @@
 #include "usb-keyboard.h"
 
-// Util functions
-int mode_select(char in_ascii, int oldmode) {
-	int newmode = 0;
-	char peekChar;
-
-	if (in_ascii == PREFIX) {
-		SerialPrintf("%s", selectMode);
-		do {
-			while (HWSERIAL.available() == 0) {
-				delay(100);
-			}
-			peekChar = HWSERIAL.peek();
-			if (peekChar == PREFIX) {
-				in_ascii = HWSERIAL.read();
-				SerialDeleteChars(strlen(selectMode));
-				return 0;
-			} else if (peekChar > '0' && peekChar < ('0'+sizeof(mode_strings)/sizeof(char*))) {
-				in_ascii = HWSERIAL.read();
-				newmode = in_ascii - '0';
-				SerialClear();
-				SerialPrintfln("Switching to %s mode", mode_strings[newmode]);
-				return newmode;
-			} else if (peekChar == 27) {
-				in_ascii = HWSERIAL.read();
-				SerialDeleteChars(strlen(selectMode));
-				return oldmode;
-			} else {
-				in_ascii = HWSERIAL.read();
-				SerialDeleteChars(strlen(selectMode));
-				SerialPrintf("%s", selectMode);
-			}
-		} while (peekChar != 27 || peekChar != PREFIX || (peekChar >= 49 && peekChar <= 51));
-	}
-	return 0;
-}
-
 uint16_t escape_sequence_to_keycode(char key) {
 	char in_ascii = key;
 	uint16_t keycode = 0;
@@ -207,70 +171,6 @@ void interactive_mode(char in_ascii) {
 	} else {
 		HWSERIAL.write(in_ascii);
 		usb_send_key(in_ascii);
-	}
-}
-
-// Command mode functions
-void command_mode(char in_ascii) {
-	uint16_t keycode = special_char_to_keycode(in_ascii);
-
-	if (keycode) {
-		switch (keycode) {
-			case KEY_ENTER:
-				SerialPrintfln("");
-				kbd_buff[kbd_idx] = '\0';
-				c_parse(kbd_buff);
-				crs_idx = kbd_idx;
-				kbd_idx = 0;
-				break;
-			case KEY_BACKSPACE:
-				if (crs_idx == kbd_idx) {
-					// TODO: Currently only supports deleting characters at the end of the
-					// line To delete in the middle of the Array, all following characters
-					// must be moved
-					SerialDeleteChars(1);
-					if (kbd_idx > 0) kbd_idx--;
-					if (crs_idx > 0) crs_idx--;
-				}
-				break;
-			case KEY_LEFT:
-				if (crs_idx > 0) {
-					SerialAnsiEsc("1D");
-					crs_idx--;
-				}
-				break;
-			case KEY_RIGHT:
-				if (crs_idx < kbd_idx) {
-					SerialAnsiEsc("1C");
-					crs_idx++;
-				}
-				break;
-			case KEY_UP:
-				if (!kbd_buff[kbd_idx]) {
-					kbd_buff[kbd_idx] = ' ';
-				}
-				while (crs_idx > kbd_idx) {
-					HWSERIAL.write(kbd_buff[kbd_idx++]);
-				}
-				break;
-		}
-	} else if (in_ascii == 3) {
-		SerialClearLine();
-		crs_idx = kbd_idx;
-		kbd_idx = 0;
-	} else if (kbd_idx >= KBD_BUFFSZ - 1) {
-		command_mode('\n');
-	} else if (in_ascii <= 26) {
-		// Intentionally left blank
-	} else {
-		HWSERIAL.write(in_ascii);
-		if (crs_idx > kbd_idx) {
-			crs_idx = kbd_idx;
-		}
-		kbd_buff[crs_idx++] = in_ascii;
-		if (kbd_idx < crs_idx) {
-			kbd_idx++;
-		}
 	}
 }
 
