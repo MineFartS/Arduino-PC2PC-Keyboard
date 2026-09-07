@@ -10,7 +10,9 @@ set "python=%~dp0..\.python\python.exe"
 echo:
 echo ----- Installing Dependencies -----
 
-"%python%" -m pip install pyserial
+"%python%" -m pip install ^
+    pyserial ^
+    keyboard
 
 ::===========================================
 

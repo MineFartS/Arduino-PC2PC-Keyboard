@@ -1,27 +1,41 @@
-from serial.tools import list_ports
+from serial.tools.list_ports import comports
 from serial import Serial
-import sys
+import keyboard
 
-# Automatically identify your Arduino/Microcontroller port
-ports = list(list_ports.comports())
-if not ports:
-    print("Error: No USB microcontrollers found! Check your connection.")
-    sys.exit(1)
-# Returns the first found port (e.g., 'COM3')
-port = ports[0].device
+port = comports()[0].device
 
 print(f"\nConnecting via LIVE-Mode on {port}...")
-print("Type your commands. Press Ctrl+C to exit.\n")
+print("Character Relay Active. Every key you type will be forwarded to the Slave PC.")
+print("Press 'ESC' to exit and close the connection.\n")
 
 ser = Serial(port, 57600, timeout=0.1)
 
-while True:
+event_map = {
+    'space': ' ',
+    'enter': '\n',
+    'backspace': '\b',
+    'tab': '\t',
+}
 
-    # Read keyboard input from user console
-    user_input = input(">> ") + "\n"
-    ser.write(user_input.encode('utf-8'))
+def on_key_event(e) -> None:
+
+    if e.event_type != 'down':
+        return
+
+    key: str = None
+
+    if e.name in event_map:
+        key = event_map[e.name]
     
-    # Check for response from microcontroller
-    if ser.in_waiting:
-        response = ser.read(ser.in_waiting).decode('utf-8', errors='ignore')
-        print(response, end='')
+    elif len(e.name) == 1:
+        key = e.name
+
+    if key is not None:
+        ser.write(key.encode('utf-8'))
+
+try:
+    keyboard.hook(on_key_event)
+    keyboard.wait('esc')
+finally:
+    ser.close()
+
