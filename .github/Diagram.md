@@ -10,11 +10,11 @@
             |                  RELAY NODE                   |
             |              (Arduino Leonardo)               |
             +-----------------------------------------------+
-               |                 |                |
-               | Pin 1 (TX)      | Pin 0 (RX)     | GND
-               |                 |                |
-               | Pin 0 (RX)      | Pin 1 (TX)     | GND
-               v                 v                v
+                        |                 |
+                        | Pin 1 (TX)      | Pin 0 (RX)
+                        |                 |
+                        | Pin 0 (RX)      | Pin 1 (TX)
+                        v                 v
             +-----------------------------------------------+
             |                INJECTOR NODE                  |
             |              (Arduino Leonardo)               |
